@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVGA Animation in HTML</title>
+    <script src="http://cdn.jsdelivr.net/npm/svga.lite/svga.lite.min.js"></script>
+    <style>
+        /* 你可以根据需要添加样式 */
+        #svgaCanvas {
+            /* width: 400px;
+            height: 300px; */
+            background-color: #f0f0f0;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="svgaCanvas"></canvas>
+
+    <script>
+        // 等待页面加载完成后执行
+        window.onload = function() {
+            // 获取canvas元素
+            const canvas = document.getElementById('svgaCanvas');
+
+            // 创建一个SVGA播放器实例
+            const player = new window.SVGA.Player(canvas);
+
+            // 设置播放器选项（可选）
+            player.set({
+                cacheFrames: true, // 是否缓存帧数据
+                intersectionObserverRender: true // 是否使用IntersectionObserver来优化渲染
+            });
+
+            // 加载并播放SVGA动画
+            const svgaUrl = './ga19.svga'; // 替换为你的SVGA文件路径
+            const downloader = new window.SVGA.Downloader();
+            downloader.get(svgaUrl).then(fileData => {
+                const parser = new window.SVGA.Parser();
+                parser.do(fileData).then(svgaData => {
+                    player.mount(svgaData); // 挂载动画数据到播放器
+                    player._startAnimation(); // 开始播放动画
+                }).catch(error => {
+                    console.error('Error parsing SVGA:', error);
+                });
+            }).catch(error => {
+                console.error('Error downloading SVGA:', error);
+            });
+        };
+    </script>
+</body>
+</html>
